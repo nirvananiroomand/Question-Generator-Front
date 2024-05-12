@@ -1,90 +1,89 @@
 <template>
   <v-container class="h-screen">
     <div>Please import your source and desired features</div>
-    <div>
-      <v-row>
-        <v-col>
-          <v-sheet>
-            <v-form @submit.prevent="generateQuestions">
-              <v-select
-                v-model="selected_types"
-                :items="Object.values(question_types)"
-                hide-details="false"
-                label="Select types of the questions"
-                multiple
-                persistent-hint
-                bg-color="#014686"
-                item-color="#457B9D"
-              ></v-select>
-              <v-select
-                v-model="selected_difficulty"
-                :items="Object.values(difficulties)"
-                hide-details="false"
-                label="Select the difficulty"
-                persistent-hint
-                bg-color="#014686"
-                item-color="#457B9D"
-              ></v-select>
-              <v-text-field
-                v-if="Object.keys(selected_types_with_quantity).includes(question_types.MULTIPLE_CHOICE)"
-                v-model="multipleChoice"
-                label="Number of Multiple Choice questions"
-                placeholder="Number of Multiple Choice questions"
-                type="number"
-                :rules="rules"
-                @input="updateQuantity(question_types.MULTIPLE_CHOICE, multipleChoice)"
-              ></v-text-field>
-              <v-text-field
-                v-if="Object.keys(selected_types_with_quantity).includes(question_types.MULTIPLE_RESPONSE)"
-                v-model="multipleResponse"
-                label="Number of Multiple Response questions"
-                placeholder="Number of Multiple Response questions"
-                type="number"
-                :rules="rules"
-                @input="updateQuantity(question_types.MULTIPLE_RESPONSE, multipleResponse)"
-              ></v-text-field>
-              <v-text-field
-                v-if="Object.keys(selected_types_with_quantity).includes(question_types.TRUE_FALSE)"
-                v-model="trueFalse"
-                label="Number of True/False questions"
-                placeholder="Number of True/False questions"
-                type="number"
-                :rules="rules"
-                @input="updateQuantity(question_types.TRUE_FALSE, trueFalse)"
-              ></v-text-field>
-              <v-text-field
-                v-if="Object.keys(selected_types_with_quantity).includes(question_types.FILL_IN_THE_BLANK)"
-                v-model="fillInTheBlank"
-                label="Number of Fill in the Blank questions"
-                placeholder="Number of Fill in the Blank questions"
-                type="number"
-                :rules="rules"
-                @input="updateQuantity(question_types.FILL_IN_THE_BLANK, fillInTheBlank)"
-              ></v-text-field>
-              <v-text-field
-                v-if="Object.keys(selected_types_with_quantity).includes(question_types.SHORT_ANSWER)"
-                v-model="shortAnswer"
-                label="Number of Short Answer questions"
-                placeholder="Number of Short Answer questions"
-                type="number"
-                :rules="rules"
-                @input="updateQuantity(question_types.SHORT_ANSWER, shortAnswer)"
-              ></v-text-field>
-              <v-text-field
-                v-if="Object.keys(selected_types_with_quantity).includes(question_types.EXTENDED_RESPONSE)"
-                v-model="extendedResponse"
-                label="Number of Extended Response questions"
-                placeholder="Number of Extended Response questions"
-                type="number"
-                :rules="rules"
-                @input="updateQuantity(question_types.EXTENDED_RESPONSE, extendedResponse)"
-              ></v-text-field>
-              <v-btn class="mt-2" type="submit" block :text="isGenerating ? 'Generating...' : 'Generate Questions'"></v-btn>
-            </v-form>
-          </v-sheet>
-        </v-col>
-      </v-row>
-    </div>
+    <v-row>
+      <v-col>
+        <v-sheet>
+          <v-form @submit.prevent="generateQuestions">
+            <v-select
+              v-model="selected_types"
+              :items="Object.values(question_types)"
+              hide-details="false"
+              label="Select types of the questions"
+              multiple
+              persistent-hint
+              bg-color="#014686"
+              item-color="#457B9D"
+            ></v-select>
+            <v-select
+              v-model="selected_difficulty"
+              :items="Object.values(difficulties)"
+              hide-details="false"
+              label="Select the difficulty"
+              persistent-hint
+              bg-color="#014686"
+              item-color="#457B9D"
+            ></v-select>
+            <v-text-field
+              v-if="Object.keys(selected_types_with_quantity).includes(question_types.MULTIPLE_CHOICE)"
+              v-model="multipleChoice"
+              label="Number of Multiple Choice questions"
+              placeholder="Number of Multiple Choice questions"
+              type="number"
+              :rules="rules"
+              @input="updateQuantity(question_types.MULTIPLE_CHOICE, multipleChoice)"
+            ></v-text-field>
+            <v-text-field
+              v-if="Object.keys(selected_types_with_quantity).includes(question_types.MULTIPLE_RESPONSE)"
+              v-model="multipleResponse"
+              label="Number of Multiple Response questions"
+              placeholder="Number of Multiple Response questions"
+              type="number"
+              :rules="rules"
+              @input="updateQuantity(question_types.MULTIPLE_RESPONSE, multipleResponse)"
+            ></v-text-field>
+            <v-text-field
+              v-if="Object.keys(selected_types_with_quantity).includes(question_types.TRUE_FALSE)"
+              v-model="trueFalse"
+              label="Number of True/False questions"
+              placeholder="Number of True/False questions"
+              type="number"
+              :rules="rules"
+              @input="updateQuantity(question_types.TRUE_FALSE, trueFalse)"
+            ></v-text-field>
+            <v-text-field
+              v-if="Object.keys(selected_types_with_quantity).includes(question_types.FILL_IN_THE_BLANK)"
+              v-model="fillInTheBlank"
+              label="Number of Fill in the Blank questions"
+              placeholder="Number of Fill in the Blank questions"
+              type="number"
+              :rules="rules"
+              @input="updateQuantity(question_types.FILL_IN_THE_BLANK, fillInTheBlank)"
+            ></v-text-field>
+            <v-text-field
+              v-if="Object.keys(selected_types_with_quantity).includes(question_types.SHORT_ANSWER)"
+              v-model="shortAnswer"
+              label="Number of Short Answer questions"
+              placeholder="Number of Short Answer questions"
+              type="number"
+              :rules="rules"
+              @input="updateQuantity(question_types.SHORT_ANSWER, shortAnswer)"
+            ></v-text-field>
+            <v-text-field
+              v-if="Object.keys(selected_types_with_quantity).includes(question_types.EXTENDED_RESPONSE)"
+              v-model="extendedResponse"
+              label="Number of Extended Response questions"
+              placeholder="Number of Extended Response questions"
+              type="number"
+              :rules="rules"
+              @input="updateQuantity(question_types.EXTENDED_RESPONSE, extendedResponse)"
+            ></v-text-field>
+            <v-btn class="mt-2" type="submit" block
+                   :text="isGenerating ? 'Generating...' : 'Generate Questions'"></v-btn>
+          </v-form>
+        </v-sheet>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -111,7 +110,6 @@ const MAX_QUESTIONS = 10
 
 export default {
   name: 'Generate',
-
   data() {
     return {
       question_types: QuestionTypes,
@@ -132,9 +130,8 @@ export default {
       rules: [
         value => {
           if (value < MIN_QUESTIONS) {
-           return `Number of questions must be at least ${MIN_QUESTIONS}`
-          }
-          else if (value > MAX_QUESTIONS) {
+            return `Number of questions must be at least ${MIN_QUESTIONS}`
+          } else if (value > MAX_QUESTIONS) {
             return `The maximum number of questions you can request is ${MAX_QUESTIONS}`
           }
           return true
@@ -205,19 +202,4 @@ export default {
 </script>
 
 <style>
-.v-container {
-  background-color: #8d99ae;
-  color: #2b2d42;
-}
-.v-form {
-  background-color: #edf2f4;
-  color: #2b2d42;
-}
-.v-btn {
-  background-color: #ef233c !important;
-  color: #2b2d42 !important;
-}
-.v-icon {
-  color: #457b9d;
-}
 </style>
