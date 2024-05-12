@@ -1,11 +1,10 @@
 <template>
-    <div>
+    <v-app>
         <v-container>
             <div>Hello this is home</div>
-            <router-link to="/generate">Generate Questions</router-link>
-            <router-link to="/questions">Questions</router-link>
+            <router-link to="/chat/generate">Generate Questions</router-link>
         </v-container>
-    </div>
+    </v-app>
 </template>
 
 <script>
