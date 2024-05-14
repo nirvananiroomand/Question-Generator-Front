@@ -1,52 +1,56 @@
 <template>
-  <div class="chat-container">
-    <!-- Header Section -->
-    <v-app-bar app color="primary">
-      <v-toolbar-title>{{ chat.title }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <!-- Add back button or any other necessary controls here -->
-    </v-app-bar>
+  <!-- Header Section -->
+  <v-app-bar app color="primary" class="px-4">
+    <v-toolbar-title>
+      <v-skeleton-loader :loading="loading" type="text" color="#2196F3">{{ chat.title }}</v-skeleton-loader>
+    </v-toolbar-title>
+    <v-spacer/>
+    <!-- Add back button or any other necessary controls here -->
+  </v-app-bar>
 
-    <!-- Content Section -->
-    <v-container fluid>
-      <v-row>
-        <!-- Left side - Chat Content -->
-        <v-col cols="12" md="8">
-          <v-card class="chat-content">
-            <v-card-title>Chat Content</v-card-title>
+  <!-- Content Section -->
+  <v-container fluid>
+    <v-row>
+      <!-- Left side - Chat Content -->
+      <v-col cols="12" md="8">
+        <v-card class="chat-content">
+          <v-card-title>Chat Content</v-card-title>
+          <v-skeleton-loader :loading="loading" type="list-item-three-line@2">
             <v-card-text>{{ chat.content }}</v-card-text>
-          </v-card>
-        </v-col>
+          </v-skeleton-loader>
+        </v-card>
+      </v-col>
 
-        <!-- Right side - Chat Questions -->
-        <v-col cols="12" md="4">
-          <v-card class="chat-questions">
-            <v-card-title>Chat Questions</v-card-title>
+      <!-- Right side - Chat Questions -->
+      <v-col cols="12" md="4">
+        <v-card class="chat-questions">
+          <v-card-title>Chat Questions</v-card-title>
+          <v-skeleton-loader :loading="loading" type="list-item-two-line@3">
             <v-card-text>
               <v-list dense>
                 <v-list-item v-for="question in chat.chat_questions" :key="question.id">
-                  <v-list-item-content>
-                    <v-list-item-title>{{ question.question_type }}</v-list-item-title>
-                    <v-list-item-subtitle>Quantity: {{ question.quantity }}</v-list-item-subtitle>
-                  </v-list-item-content>
+                  <v-list-item-title>{{ question.question_type }}</v-list-item-title>
+                  <v-list-item-subtitle>Quantity: {{ question.quantity }}</v-list-item-subtitle>
                 </v-list-item>
               </v-list>
             </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+          </v-skeleton-loader>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <!-- Generated Response Section -->
-      <v-row>
-        <v-col cols="12" md="8">
-          <v-card class="generated-response">
-            <v-card-title>Generated Response</v-card-title>
+    <!-- Generated Response Section -->
+    <v-row>
+      <v-col cols="12" md="8">
+        <v-card class="generated-response">
+          <v-card-title>Generated Response</v-card-title>
+          <v-skeleton-loader :loading="loading" type="list-item-three-line">
             <v-card-text>{{ chat.response }}</v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+          </v-skeleton-loader>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -58,32 +62,35 @@ export default {
     return {
       chat: {},
       id: null,
-    };
+      loading: true
+    }
   },
   created() {
-    this.id = this.$route.params.id; // Initialize id when component is created
-    this.fetchChatDetails(); // Fetch chat details immediately
+    this.id = this.$route.params.id // Initialize id when component is created
+    this.fetchChatDetails() // Fetch chat details immediately
   },
   watch: {
     '$route.params.id': function(newId) {
       // Update id when route param changes
-      this.id = newId;
-      this.fetchChatDetails(); // Fetch chat details when id changes
+      this.id = newId
+      this.fetchChatDetails() // Fetch chat details when id changes
     }
   },
   methods: {
     async fetchChatDetails() {
       if (this.id) {
         try {
-          const response = await axios.get(`http://127.0.0.1:8000/conversations/chats/${this.id}`);
-          this.chat = response.data;
+          const response = await axios.get(`http://127.0.0.1:8000/conversations/chats/${this.id}`)
+          this.loading = false
+          this.chat = response.data
         } catch (error) {
-          console.error('Error fetching chat:', error);
+          this.loading = false
+          console.error('Error fetching chat:', error)
         }
       }
     }
   }
-};
+}
 
 //////////////////APPROACH THREE/////////////////////////////////////
 // export default {
@@ -206,10 +213,6 @@ export default {
 </script>
 
 <style>
-.chat-container {
-  padding: 20px;
-}
-
 .chat-content,
 .chat-questions,
 .generated-response {

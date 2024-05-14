@@ -7,7 +7,8 @@
       <v-divider />
     </template>
 
-    <v-list>
+    <v-skeleton-loader v-if="navigationItems.length === 0" height="40px" class="mt-3" type="list-item-two-line@8" />
+    <v-list v-else>
       <v-list-item v-for="item in navigationItems" :key="item.id" :to="`/chat/${item.id}/`">
         <v-list-item-title>{{ item.title }}</v-list-item-title>
       </v-list-item>
@@ -25,6 +26,7 @@
 
 <script>
 import axios from 'axios'
+
 export default {
   name: 'DefaultDrawer',
   data() {
@@ -37,7 +39,7 @@ export default {
   },
   methods: {
     async fetchChatsData() {
-      console.log("in fetch chats data")
+      console.log('in fetch chats data')
       try {
         const response = await axios.get('http://127.0.0.1:8000/conversations/chats/')
         this.navigationItems = response.data.chats
