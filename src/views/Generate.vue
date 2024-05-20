@@ -1,7 +1,7 @@
 <template>
   <v-container class="h-screen">
     <v-app-bar app color="#1565C0" class="px-4">
-    <v-toolbar-title class="font-weight-medium">Generate New Questions</v-toolbar-title>
+      <v-toolbar-title class="font-weight-medium">Generate New Questions</v-toolbar-title>
     </v-app-bar>
     <v-row>
       <v-col cols="12">
@@ -9,8 +9,9 @@
           <v-form @submit.prevent="generateQuestions">
             <v-text-field v-model="title" label="Title"></v-text-field>
             <v-textarea v-model="content" label="Content"></v-textarea>
-            <v-select v-model="selected_difficulty" :items="Object.values(difficulties)" label="Select the difficulty"></v-select>
-            <v-btn @click="addQuestionRow" color="#1565C0" dark class="font-weight-black mb-5" rounded="lg" >+</v-btn>
+            <v-select v-model="selected_difficulty" :items="Object.values(difficulties)"
+                      label="Select the difficulty"></v-select>
+            <v-btn @click="addQuestionRow" color="#1565C0" dark class="font-weight-black mb-5" rounded="lg">+</v-btn>
             <v-row v-for="(row, index) in questionRows" :key="index">
               <v-col cols="5">
                 <v-select v-model="row.type" :items="availableQuestionTypes" label="Select question type"></v-select>
@@ -19,11 +20,12 @@
                 <v-text-field v-model="row.quantity" label="Quantity" type="number"></v-text-field>
               </v-col>
               <v-col cols="2">
-                <v-btn @click="removeQuestionRow(index)" color="#D81B60"  class="font-weight-black" dark rounded="lg">-</v-btn>
+                <v-btn @click="removeQuestionRow(index)" color="#D81B60" class="font-weight-black" dark rounded="lg">-
+                </v-btn>
               </v-col>
             </v-row>
-            <v-btn class="mt-2" type="submit" block color="#1565C0" :disabled="isGenerating">
-              {{ isGenerating ? 'Generating...' : 'Generate Questions' }}
+            <v-btn class="mt-2" type="submit" block color="#1565C0" :disabled="this.isGenerating">
+              {{ this.isGenerating ? 'Generating...' : 'Generate Questions' }}
             </v-btn>
           </v-form>
         </v-sheet>
@@ -33,7 +35,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions, mapState } from 'vuex'
 
 const QuestionTypes = {
   MULTIPLE_CHOICE: 'Multiple Choice',
@@ -63,30 +65,23 @@ export default {
       selected_difficulty: '',
       title: '',
       content: '',
-      questionRows: [{ type: '', quantity: 0 }],
-      isGenerating: false
-    }
-  },
-  computed: {
-    availableQuestionTypes() {
-      // Get the types already selected
-      const selectedTypes = this.questionRows.map(row => row.type);
-      // Filter out the types already selected
-      return Object.values(QuestionTypes).filter(type => !selectedTypes.includes(type));
+      questionRows: [{ type: '', quantity: 0 }]
     }
   },
   methods: {
+    ...mapActions(['createChat']),
+
     addQuestionRow() {
       if (this.questionRows.length < MAX_QUESTIONS) {
-        this.questionRows.push({ type: '', quantity: 0 });
+        this.questionRows.push({ type: '', quantity: 0 })
       }
     },
-    removeQuestionRow(index) {
-      this.questionRows.splice(index, 1);
-    },
-    async generateQuestions() {
-      this.isGenerating = true;
 
+    removeQuestionRow(index) {
+      this.questionRows.splice(index, 1)
+    },
+
+    async generateQuestions() {
       const requestData = {
         title: this.title,
         content: this.content,
@@ -95,22 +90,24 @@ export default {
           question_type: row.type,
           quantity: row.quantity
         }))
-      };
+      }
 
       try {
-        const response = await axios.post('http://127.0.0.1:8000/conversations/chats/', requestData);
-
-        // Handle the response if needed
-        const responseData = response.data
-        console.log('Generated questions:', responseData);
-        const newChatId = responseData.id
-        this.$router.push(`/chat/${newChatId}`);
-
-        this.isGenerating = false;
-      } catch (error) {
-        console.error('Error generating questions:', error.message);
-        this.isGenerating = false;
+        const chat = await this.createChat(requestData)
+        this.$router.replace(`/chat/${chat.id}`);
+      } catch (e) {
+        console.log(e)
       }
+    }
+  },
+  computed: {
+    ...mapState(['isGenerating']),
+
+    availableQuestionTypes() {
+      // Get the types already selected
+      const selectedTypes = this.questionRows.map(row => row.type)
+      // Filter out the types already selected
+      return Object.values(QuestionTypes).filter(type => !selectedTypes.includes(type))
     }
   }
 }

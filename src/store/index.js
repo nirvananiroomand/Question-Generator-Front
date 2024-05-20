@@ -50,6 +50,10 @@ const store = createStore({
         context.commit('setIsGenerating', false)
         throw error
       }
+    },
+    async getChatDetail(context, id){
+      const response = await axios.get(`http://127.0.0.1:8000/conversations/chats/${id}`)
+      return response.data
     }
   },
   getters: {
