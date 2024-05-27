@@ -21,9 +21,9 @@
               outlined
               required
             ></v-text-field>
-            <v-btn color="#80CBC4" large class="mt-8" type="submit" onclick="this.handleLogin()">Log In</v-btn>
+            <v-btn color="#80CBC4" large class="mt-8" type="submit">Log In</v-btn>
           </v-form>
-          <p class="mt-4">Don't have an account? <v-btn text color="primary" variant="text" to="/signup">Sign Up</v-btn></p>
+          <p class="mt-4">Don't have an account? <v-btn color="primary" variant="text" to="/signup">Sign Up</v-btn></p>
         </v-col>
       </v-row>
     </v-container>
@@ -31,10 +31,10 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions } from 'vuex'
 
 export default {
-  name: 'Login',
+  name: 'LoginPage',
   data() {
     return {
       username: '',
@@ -42,13 +42,17 @@ export default {
     };
   },
   methods: {
+    ...mapActions('user', ['login']),
+
     async handleLogin() {
-      console.log('Login data:', this.username, this.password);
       const loginData = {"username": this.username, "password": this.password}
-      const response = await axios.post('http://127.0.0.1:8000/users/login/', loginData)
-      console.log(response.data)
-      this.$router.replace('/chat/generate');
-      return response.data
+      try{
+        await this.login(loginData)
+        this.$router.replace('/chat/generate');
+      }
+      catch (e) {
+        console.log('error in login request', e)
+      }
     }
   }
 }

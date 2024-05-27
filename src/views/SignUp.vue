@@ -36,9 +36,9 @@
               outlined
               required
             ></v-text-field>
-            <v-btn color="primary" large class="mt-8" type="submit" onclick="this.handleSignup()">Sign Up</v-btn>
+            <v-btn color="primary" large class="mt-8" type="submit">Sign Up</v-btn>
           </v-form>
-          <p class="mt-4">Already have an account? <v-btn text color="#80CBC4" variant="text" to="/login">Log In</v-btn></p>
+          <p class="mt-4">Already have an account? <v-btn color="#80CBC4" variant="text" to="/login">Log In</v-btn></p>
         </v-col>
       </v-row>
     </v-container>
@@ -46,10 +46,10 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions } from 'vuex'
 
 export default {
-  name: 'Signup',
+  name: 'SignupPage',
   data() {
     return {
       username: '',
@@ -59,13 +59,16 @@ export default {
     };
   },
   methods: {
+    ...mapActions('user', ['signup']),
+
     async handleSignup() {
-      console.log('Signup data:', this.username, this.email, this.password, this.rePassword);
       const signupData = {"username": this.username, "password": this.password, "re_password": this.rePassword, "email": this.email}
-      const response = await axios.post('http://127.0.0.1:8000/users/signup/', signupData)
-      console.log(response.data)
-      this.$router.replace('/chat/generate');
-      return response.data
+      try {
+        await this.signup(signupData)
+        this.$router.replace('/chat/generate')
+      } catch (e) {
+        console.log('error in signup request', e)
+      }
     }
   }
 }
