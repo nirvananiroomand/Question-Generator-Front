@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 const QuestionTypes = {
   MULTIPLE_CHOICE: 'Multiple Choice',
@@ -69,7 +69,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['createChat']),
+    ...mapActions('chat', ['createChat']),
 
     addQuestionRow() {
       if (this.questionRows.length < MAX_QUESTIONS) {
@@ -83,6 +83,7 @@ export default {
 
     async generateQuestions() {
       const requestData = {
+        user: this.userId,
         title: this.title,
         content: this.content,
         difficulty: this.selected_difficulty,
@@ -101,7 +102,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isGenerating']),
+    ...mapState('chat', ['isGenerating']),
+    ...mapGetters('user', ['userId']),
 
     availableQuestionTypes() {
       // Get the types already selected

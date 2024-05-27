@@ -72,7 +72,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getChatDetail"]),
+    ...mapActions('chat', ["getChatDetail"]),
 
     async fetchChatDetails() {
       if (this.id) {

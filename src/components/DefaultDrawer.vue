@@ -33,10 +33,10 @@ export default {
     this.getAllChats()
   },
   methods: {
-    ...mapActions(['getAllChats'])
+    ...mapActions('chat', ['getAllChats'])
   },
   computed: {
-    ...mapState(['isRetrievingChatsHistory', 'chatsHistory'])
+    ...mapState('chat', ['isRetrievingChatsHistory', 'chatsHistory'])
   }
 }
 </script>
