@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios'
 
 export default {
   namespaced: true,
@@ -34,5 +34,18 @@ export default {
     }
   },
 
-  getters: {}
+  getters: {
+    isAuthenticated(state) {
+      return state.tokens != null
+    },
+    accessToken(state) {
+      return state.tokens.access
+    },
+    refreshToken(state) {
+      return state.tokens.refresh
+    },
+    userId(state) {
+      return state.user.id
+    }
+  }
 }
