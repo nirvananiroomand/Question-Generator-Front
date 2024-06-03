@@ -11,10 +11,16 @@ export default {
   },
 
   mutations: {
+    initializeState(state){
+      state.user = JSON.parse(localStorage.getItem('user'))
+      state.tokens = JSON.parse(localStorage.getItem('tokens'))
+    },
     setUser(state, user) {
+      localStorage.setItem('user', JSON.stringify(user))
       state.user = user
     },
     setTokens(state, tokens) {
+      localStorage.setItem('tokens', JSON.stringify(tokens))
       state.tokens = tokens
     }
   },

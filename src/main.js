@@ -23,5 +23,7 @@ app.use(vuetify)
 app.use(router)
 app.use(store)
 
+store.commit('user/initializeState')
+
 app.mount('#app')
 
