@@ -6,26 +6,53 @@
     <v-row>
       <v-col cols="12">
         <v-sheet>
-          <v-form @submit.prevent="generateQuestions">
-            <v-text-field v-model="title" label="Title"></v-text-field>
-            <v-textarea v-model="content" label="Content"></v-textarea>
-            <v-select v-model="selected_difficulty" :items="Object.values(difficulties)"
-                      label="Select the difficulty"></v-select>
+          <v-form ref="form" @submit.prevent="generateQuestions" v-model="valid">
+            <v-text-field
+              v-model="title"
+              label="Title"
+              :rules="titleRules"
+              required
+            ></v-text-field>
+            <v-textarea
+              v-model="content"
+              label="Content"
+              :rules="contentRules"
+              required
+            ></v-textarea>
+            <v-select
+              v-model="selected_difficulty"
+              :items="Object.values(difficulties)"
+              label="Select the difficulty"
+              :rules="difficultyRules"
+              required
+            ></v-select>
             <v-btn @click="addQuestionRow" color="#1565C0" dark class="font-weight-black mb-5" rounded="lg">+</v-btn>
             <v-row v-for="(row, index) in questionRows" :key="index">
               <v-col cols="5">
-                <v-select v-model="row.type" :items="availableQuestionTypes" label="Select question type"></v-select>
+                <v-select
+                  v-model="row.type"
+                  :items="availableQuestionTypes"
+                  label="Select question type"
+                  :rules="questionTypeRules"
+                  required
+                ></v-select>
               </v-col>
               <v-col cols="5">
-                <v-text-field v-model="row.quantity" label="Quantity" type="number"></v-text-field>
+                <v-text-field
+                  v-model="row.quantity"
+                  label="Quantity"
+                  type="number"
+                  :rules="quantityRules"
+                  required
+                ></v-text-field>
               </v-col>
               <v-col cols="2">
                 <v-btn @click="removeQuestionRow(index)" color="#D81B60" class="font-weight-black" dark rounded="lg">-
                 </v-btn>
               </v-col>
             </v-row>
-            <v-btn class="mt-2" type="submit" block color="#1565C0" :disabled="this.isGenerating">
-              {{ this.isGenerating ? 'Generating...' : 'Generate Questions' }}
+            <v-btn class="mt-2" type="submit" block color="#1565C0" :disabled="!valid || isGenerating">
+              {{ isGenerating ? 'Generating...' : 'Generate Questions' }}
             </v-btn>
           </v-form>
         </v-sheet>
@@ -65,7 +92,28 @@ export default {
       selected_difficulty: '',
       title: '',
       content: '',
-      questionRows: [{ type: '', quantity: 0 }]
+      questionRows: [{ type: '', quantity: 0 }],
+      valid: false,
+      isGenerating: false,
+      titleRules: [
+        v => !!v || 'Title is required',
+        v => v.length >= 5 || 'Title must be at least 5 characters'
+      ],
+      contentRules: [
+        v => !!v || 'Content is required',
+        v => v.length >= 10 || 'Content must be at least 10 characters'
+      ],
+      difficultyRules: [
+        v => !!v || 'Difficulty is required'
+      ],
+      questionTypeRules: [
+        v => !!v || 'Question type is required'
+      ],
+      quantityRules: [
+        v => !!v || 'Quantity is required',
+        v => (v && v > 0) || 'Quantity must be greater than 0',
+        v => (v && v <= MAX_QUESTIONS) || `Quantity must be less than or equal to ${MAX_QUESTIONS}`
+      ]
     }
   },
   methods: {
@@ -82,22 +130,27 @@ export default {
     },
 
     async generateQuestions() {
-      const requestData = {
-        user: this.userId,
-        title: this.title,
-        content: this.content,
-        difficulty: this.selected_difficulty,
-        chat_questions: this.questionRows.map(row => ({
-          question_type: row.type,
-          quantity: row.quantity
-        }))
-      }
+      if (this.$refs.form.validate()) {
+        this.isGenerating = true;
+        const requestData = {
+          user: this.userId,
+          title: this.title,
+          content: this.content,
+          difficulty: this.selected_difficulty,
+          chat_questions: this.questionRows.map(row => ({
+            question_type: row.type,
+            quantity: row.quantity
+          }))
+        }
 
-      try {
-        const chat = await this.createChat(requestData)
-        this.$router.replace(`/chat/${chat.id}`);
-      } catch (e) {
-        console.log(e)
+        try {
+          const chat = await this.createChat(requestData)
+          this.isGenerating = false;
+          this.$router.replace(`/chat/${chat.id}`);
+        } catch (e) {
+          this.isGenerating = false;
+          console.log(e)
+        }
       }
     }
   },
