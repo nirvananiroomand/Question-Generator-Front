@@ -15,11 +15,12 @@
     </v-list>
 
     <template v-slot:append>
-      <router-link class="pa-2" to="/chat/generate">
-        <v-btn block>
-          Generate
-        </v-btn>
-      </router-link>
+      <v-btn block variant="outlined" class="my-3" to="/chat/generate">
+        Generate
+      </v-btn>
+      <v-btn block variant="plain" @click.prevent="logout">
+        Logout
+      </v-btn>
     </template>
   </v-navigation-drawer>
 </template>
@@ -33,7 +34,8 @@ export default {
     this.getAllChats()
   },
   methods: {
-    ...mapActions('chat', ['getAllChats'])
+    ...mapActions('chat', ['getAllChats']),
+    ...mapActions('user', ['logout'])
   },
   computed: {
     ...mapState('chat', ['isRetrievingChatsHistory', 'chatsHistory'])

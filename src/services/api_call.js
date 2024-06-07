@@ -27,10 +27,11 @@ export async function apiCall(context, { method, url, data, authRequired = true 
         })
         return response
       } catch (refreshError) {
-        // TODO: handle 401 for refresh -> redirect to login + clear tokens from store and local storage
         if (refreshError.response && refreshError.response.status === 401) {
-          console.log('un authorized. logout needed')
+          await context.dispatch('user/logout', null, { root: true })
+          return
         }
+        console.error('Error refreshing token:', refreshError)
         throw refreshError
       }
     }

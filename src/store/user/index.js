@@ -1,4 +1,5 @@
 import { apiCall } from '@/services/api_call.js'
+import router from '@/router/index.js'
 
 export default {
   namespaced: true,
@@ -22,6 +23,14 @@ export default {
     setTokens(state, tokens) {
       localStorage.setItem('tokens', JSON.stringify(tokens))
       state.tokens = tokens
+    },
+    clearTokens(state) {
+      state.tokens = null
+      localStorage.removeItem('tokens')
+    },
+    clearUser(state){
+      state.user = null
+      localStorage.removeItem('user')
     }
   },
 
@@ -58,6 +67,11 @@ export default {
       })
       context.commit('setTokens', response.data)
       return response
+    },
+    logout(context) {
+      context.commit('clearTokens')
+      context.commit('clearUser')
+      router.replace('/login')
     }
   },
 
