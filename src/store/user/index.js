@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { apiCall } from '@/services/api_call.js'
 
 export default {
   namespaced: true,
@@ -11,7 +11,7 @@ export default {
   },
 
   mutations: {
-    initializeState(state){
+    initializeState(state) {
       state.user = JSON.parse(localStorage.getItem('user'))
       state.tokens = JSON.parse(localStorage.getItem('tokens'))
     },
@@ -27,16 +27,37 @@ export default {
 
   actions: {
     async signup(context, payload) {
-      const response = await axios.post('http://127.0.0.1:8000/users/signup/', payload)
+      const response = await apiCall(context, {
+        method: 'post',
+        url: 'http://127.0.0.1:8000/users/signup/',
+        data: payload,
+        authRequired: false
+      })
       context.commit('setUser', response.data)
       context.commit('setTokens', response.data.tokens)
       return response.data
     },
     async login(context, payload) {
-      const response = await axios.post('http://127.0.0.1:8000/users/login/', payload)
+      const response = await apiCall(context, {
+        method: 'post',
+        url: 'http://127.0.0.1:8000/users/login/',
+        data: payload,
+        authRequired: false
+      })
       context.commit('setUser', response.data)
       context.commit('setTokens', response.data.tokens)
       return response.data
+    },
+    async refreshToken(context) {
+      const refreshToken = context.getters.refreshToken
+      const response = await apiCall(context, {
+        method: 'post',
+        url: 'http://127.0.0.1:8000/users/token/refresh/',
+        data: { refresh: refreshToken },
+        authRequired: false
+      })
+      context.commit('setTokens', response.data)
+      return response
     }
   },
 
@@ -45,13 +66,13 @@ export default {
       return state.tokens != null
     },
     accessToken(state) {
-      return state.tokens.access
+      return state.tokens ? state.tokens.access : null
     },
     refreshToken(state) {
-      return state.tokens.refresh
+      return state.tokens ? state.tokens.refresh : null
     },
     userId(state) {
-      return state.user.id
+      return state.user ? state.user.id : null
     }
   }
 }

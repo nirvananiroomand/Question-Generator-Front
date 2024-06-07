@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { apiCall } from '@/services/api_call.js'
 
 export default {
   namespaced: true,
@@ -30,11 +30,9 @@ export default {
     async getAllChats(context) {
       context.commit('setIsRetrievingChatsHistory', true)
       try {
-        const accessToken = context.rootGetters['user/accessToken']
-        const response = await axios.get('http://127.0.0.1:8000/conversations/chats/', {
-          headers: {
-            Authorization: `JWT ${accessToken}`
-          }
+        const response = await apiCall(context, {
+          method: 'get',
+          url: 'http://127.0.0.1:8000/conversations/chats/'
         })
         context.commit('setIsRetrievingChatsHistory', false)
         context.commit('setChats', response.data.chats)
@@ -46,12 +44,10 @@ export default {
     async createChat(context, payload) {
       context.commit('setIsGenerating', true)
       try {
-        const accessToken = context.rootGetters['user/accessToken']
-        const response = await axios.post('http://127.0.0.1:8000/conversations/chats/', payload, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `JWT ${accessToken}`
-          }
+        const response = await apiCall(context, {
+          method: 'post',
+          url: 'http://127.0.0.1:8000/conversations/chats/',
+          data: payload
         })
         context.commit('addNewChat', response.data)
         context.commit('setIsGenerating', false)
@@ -63,13 +59,16 @@ export default {
       }
     },
     async getChatDetail(context, id) {
-      const accessToken = context.rootGetters['user/accessToken']
-      const response = await axios.get(`http://127.0.0.1:8000/conversations/chats/${id}`, {
-        headers: {
-          Authorization: `JWT ${accessToken}`
-        }
-      })
-      return response.data
+      try {
+        const response = await apiCall(context, {
+          method: 'get',
+          url: `http://127.0.0.1:8000/conversations/chats/${id}`
+        })
+        return response.data
+      } catch (error) {
+        console.error('Error fetching chat detail:', error)
+        throw error
+      }
     }
   },
 
