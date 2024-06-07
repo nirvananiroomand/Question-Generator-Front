@@ -6,7 +6,7 @@
         <v-col cols="12" sm="10" md="8" class="text-center">
           <h1 class="display-2 mb-6">Welcome to QuesGen </h1>
           <p class="subtitle-1">Effortlessly generate, customize, and track your questions to enhance your learning and productivity.</p>
-          <v-btn color="#073979FF" large class="mt-8" @click="handleGenerate">Generate Questions</v-btn>
+          <v-btn color="#073979FF" large class="mt-8" to="/chat/generate">Generate Questions</v-btn>
         </v-col>
       </v-row>
 
@@ -49,16 +49,7 @@
 
 <script>
 export default {
-  name: 'Home',
-  methods: {
-    handleGenerate() {
-      if (!localStorage.getItem('access_token')) {
-        this.$router.push('/login');
-      } else {
-        this.$router.push('/chat/generate');
-      }
-    }
-  }
+  name: 'HomePage'
 }
 </script>
 
